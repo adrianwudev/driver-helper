@@ -1,0 +1,2 @@
+docker run --name postgres-driver -d -p 9040:5432 -e POSTGRES_PASSWORD=password postgres:15.3
+docker run -d -p 9041:80 --name postgres-driver-admin -e "PGADMIN_DEFAULT_EMAIL=pgadmin@gmail.com" -e "PGADMIN_DEFAULT_PASSWORD=password" dpage/pgadmin4

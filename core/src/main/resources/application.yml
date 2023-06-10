@@ -1,0 +1,14 @@
+# PostgreSQL
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:9040/driver
+    username: adrian
+    password: password
+    driver-class-name: org.postgresql.Driver
+  flyway:
+    locations: "classpath:db/migration"
+
+flyway:
+  validate-on-migrate: false
+  encoding: UTF8MB4
+  out-of-order: true

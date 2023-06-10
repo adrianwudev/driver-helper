@@ -1,0 +1,9 @@
+BEGIN;
+
+CREATE TABLE test (
+    id SERIAL PRIMARY KEY,
+    test_name VARCHAR(255)
+);
+
+
+COMMIT;
