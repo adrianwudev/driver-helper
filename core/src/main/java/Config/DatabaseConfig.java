@@ -23,7 +23,7 @@ public class DatabaseConfig {
         String password = environment.getProperty("spring.datasource.password");
         String driverClassName = environment.getProperty("spring.datasource.driver-class-name");
 
-        // 建立資料庫連線
+        // Create DB connection
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setUrl(url);
         dataSource.setUsername(username);

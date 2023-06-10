@@ -42,7 +42,6 @@ public class OrderRepository implements Repository<Order> {
 
             return rowsAffected > 0;
         } catch (Exception e) {
-            // 處理異常情況
             log.error("exception", e);
             return false;
         }
