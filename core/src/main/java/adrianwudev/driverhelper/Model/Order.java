@@ -1,4 +1,4 @@
-package Model;
+package adrianwudev.driverhelper.Model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

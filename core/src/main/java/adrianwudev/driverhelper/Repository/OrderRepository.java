@@ -1,22 +1,32 @@
-package Repository;
+package adrianwudev.driverhelper.Repository;
 
-import Model.Order;
+import adrianwudev.driverhelper.Model.Order;
 import lombok.extern.slf4j.Slf4j;
 import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
+import org.springframework.stereotype.Service;
 
 import java.sql.Connection;
+import java.util.List;
 
 @Slf4j
+@Service
 public class OrderRepository implements Repository<Order> {
-    private DSLContext dslContext;
+    private final DSLContext dslContext;
 
     public OrderRepository(Connection connection) {
         this.dslContext = DSL.using(connection, SQLDialect.POSTGRES);
     }
+
+
     @Override
     public Order get(int id) {
+        return null;
+    }
+
+    @Override
+    public List<Order> getAll(int page, int pageSize) {
         return null;
     }
 

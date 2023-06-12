@@ -12,3 +12,8 @@ flyway:
   validate-on-migrate: false
   encoding: UTF8MB4
   out-of-order: true
+
+order:
+  default:
+    page: 1
+    page-size:  50

@@ -1,9 +1,11 @@
-package Config;
+package adrianwudev.driverhelper.Config;
 
-import Repository.OrderRepository;
+import adrianwudev.driverhelper.Qualifier.DefaultPage;
+import adrianwudev.driverhelper.Qualifier.DefaultPageSize;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
@@ -32,4 +34,18 @@ public class DatabaseConfig {
 
         return dataSource.getConnection();
     }
+
+    @Value("${order.default.page}")
+    public int defaultPage;
+    @Bean
+    @DefaultPage
+    public int defaultPage(){return defaultPage;}
+
+    @Value("${order.default.page-size}")
+    public int defaultPageSize;
+
+    @Bean
+    @DefaultPageSize
+    public int defaultPageSize(){return defaultPageSize;}
+
 }
