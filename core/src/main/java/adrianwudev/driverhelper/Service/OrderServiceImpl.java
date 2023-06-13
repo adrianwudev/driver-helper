@@ -8,6 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -38,12 +40,16 @@ public class OrderServiceImpl implements OrderService{
 
     @Override
     public boolean AddOrder(Order order) {
+        order.setWeekday(LocalDate.now().getDayOfWeek().toString());
+        order.setCreateTime(LocalDateTime.now());
+        order.setModifyTime(LocalDateTime.now());
         return repository.create(order);
     }
 
     @Override
     public boolean UpdateOrder(Order order) {
-        return false;
+        order.setModifyTime(LocalDateTime.now());
+        return repository.update(order);
     }
 
     @Override

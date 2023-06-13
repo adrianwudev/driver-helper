@@ -18,10 +18,12 @@ public class Order {
     private LocalDateTime orderTime;
     private String pickUpDrop;
     private LocalDateTime pickUpTime;
-    private DayOfWeek weekday;
-    private String group;
+    private String weekday;
+    private String groupName;
     private double amount;
     private double distance;
     private boolean isException;
     private int repeatCount;
+    private LocalDateTime createTime;
+    private LocalDateTime modifyTime;
 }

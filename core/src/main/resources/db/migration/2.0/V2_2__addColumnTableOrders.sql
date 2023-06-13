@@ -1,0 +1,3 @@
+ALTER TABLE orders
+ADD COLUMN create_time TIMESTAMP,
+ADD COLUMN modify_time TIMESTAMP;
