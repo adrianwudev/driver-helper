@@ -7,6 +7,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.jooq.DSLContext;
+import org.jooq.Record;
+import org.jooq.Result;
 import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
 import org.springframework.stereotype.Service;
@@ -32,7 +34,11 @@ public class OrderRepository implements Repository<Order> {
 
     @Override
     public Order get(int id) {
-        return null;
+        Result<Record> result = dslContext.fetch("SELECT * FROM orders WHERE order_id = ?", id);
+
+        if (!result.isNotEmpty())
+            return null;
+        return result.get(0).into(Order.class);
     }
 
     @Override

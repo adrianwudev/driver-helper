@@ -22,8 +22,8 @@ public class OrderController {
     }
 
     @GetMapping("/{orderId}")
-    public Order getOrder(@PathVariable int orderId) {
-        return orderService.GetOrder(orderId);
+    public JsonResponse<Order> getOrder(@PathVariable int orderId) {
+        return new JsonResponse<>(StatusCode.OK.getCode(), orderService.GetOrder(orderId));
     }
 
     @GetMapping
