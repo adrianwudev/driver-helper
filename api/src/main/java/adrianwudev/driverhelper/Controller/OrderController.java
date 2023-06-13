@@ -1,17 +1,23 @@
 package adrianwudev.driverhelper.Controller;
 
 import adrianwudev.driverhelper.Model.Order;
+import adrianwudev.driverhelper.Response.JsonResponse;
 import adrianwudev.driverhelper.Service.OrderService;
+import adrianwudev.driverhelper.Codes.StatusCode;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/orders")
 public class OrderController {
     private final OrderService orderService;
 
-    public OrderController(OrderService orderservice){
+    @Autowired
+    public OrderController(OrderService orderservice) {
         this.orderService = orderservice;
     }
 
@@ -26,8 +32,11 @@ public class OrderController {
     }
 
     @PostMapping
-    public boolean addOrder(@RequestBody Order order) {
-        return orderService.AddOrder(order);
+    public JsonResponse<Object> addOrder(@RequestBody Order order) {
+        if (orderService.AddOrder(order))
+            return new JsonResponse<>(StatusCode.OK.getCode());
+        else
+            return new JsonResponse<>(StatusCode.UNKNOWN.getCode());
     }
 
     @PutMapping("/{orderId}")
