@@ -1,6 +1,7 @@
 package adrianwudev.driverhelper.Controller;
 
 import adrianwudev.driverhelper.Model.Order;
+import adrianwudev.driverhelper.Model.PageResult;
 import adrianwudev.driverhelper.Response.JsonResponse;
 import adrianwudev.driverhelper.Service.OrderService;
 import adrianwudev.driverhelper.Codes.StatusCode;
@@ -27,8 +28,9 @@ public class OrderController {
     }
 
     @GetMapping
-    public List<Order> getOrders(@RequestParam int page, @RequestParam int pageSize) {
-        return orderService.GetOrders(page, pageSize);
+    public JsonResponse<PageResult<Order>> getOrders(
+            @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "0") int pageSize) {
+        return new JsonResponse<>(StatusCode.OK.getCode(), orderService.GetOrders(page, pageSize));
     }
 
     @PostMapping

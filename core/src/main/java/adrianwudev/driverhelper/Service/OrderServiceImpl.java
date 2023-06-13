@@ -1,6 +1,7 @@
 package adrianwudev.driverhelper.Service;
 
 import adrianwudev.driverhelper.Model.Order;
+import adrianwudev.driverhelper.Model.PageResult;
 import adrianwudev.driverhelper.Qualifier.DefaultPage;
 import adrianwudev.driverhelper.Qualifier.DefaultPageSize;
 import adrianwudev.driverhelper.Repository.OrderRepository;
@@ -10,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Slf4j
 @Service
@@ -32,7 +32,7 @@ public class OrderServiceImpl implements OrderService{
     }
 
     @Override
-    public List<Order> GetOrders(int page, int pageSize) {
+    public PageResult<Order> GetOrders(int page, int pageSize) {
         if (page <= 0) page = defaultPage;
         if (pageSize <= 0) pageSize = defaultPageSize;
         return repository.getAll(page, pageSize);

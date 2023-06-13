@@ -1,10 +1,8 @@
 package adrianwudev.driverhelper.Repository;
 
 import adrianwudev.driverhelper.Model.Order;
+import adrianwudev.driverhelper.Model.PageResult;
 import adrianwudev.driverhelper.Util.GsonAdaptor;
-import adrianwudev.driverhelper.Util.LocalDateAdapter;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.jooq.DSLContext;
 import org.jooq.Record;
@@ -14,17 +12,11 @@ import org.jooq.impl.DSL;
 import org.springframework.stereotype.Service;
 
 import java.sql.Connection;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.util.Calendar;
 import java.util.List;
-import java.util.TimeZone;
 
 @Slf4j
 @Service
 public class OrderRepository implements Repository<Order> {
-    public static final Calendar tzUTC = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
     private final DSLContext dslContext;
 
     public OrderRepository(Connection connection) {
@@ -42,8 +34,25 @@ public class OrderRepository implements Repository<Order> {
     }
 
     @Override
-    public List<Order> getAll(int page, int pageSize) {
-        return null;
+    public PageResult<Order> getAll(int page, int pageSize) {
+        try {
+            return dslContext.transactionResult(configuration -> {
+                DSLContext ctx = DSL.using(configuration);
+                String sql = "SELECT * FROM orders LIMIT ? OFFSET ?";
+                List<Order> orders = ctx.fetch(sql, pageSize, (page - 1) * pageSize)
+                        .into(Order.class);
+                String countSql = "SELECT COUNT(*) AS count FROM orders";
+
+                Record countRecord = ctx.fetchOne(countSql);
+                Integer total = countRecord != null
+                        ? countRecord.getValue(0, Integer.class) : 0;
+
+                return new PageResult<>(total, page, pageSize, orders);
+            });
+        } catch (Exception e) {
+            log.error("error: ", e);
+            throw e;
+        }
     }
 
     @Override
@@ -53,7 +62,7 @@ public class OrderRepository implements Repository<Order> {
 
         try {
             int rowsAffected = dslContext
-                    .execute("INSERT INTO public.orders( " +
+                    .execute("INSERT INTO orders( " +
                                     " city, district, address " +
                                     ", order_time, pick_up_drop, pick_up_time" +
                                     ", weekday, group_name, amount, distance" +
