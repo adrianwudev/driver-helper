@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 public class Order {
-    private long orderId;
+    private int orderId;
     private String city;
     private String district;
     private String address;
