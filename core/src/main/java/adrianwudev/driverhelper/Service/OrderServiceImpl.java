@@ -4,7 +4,7 @@ import adrianwudev.driverhelper.Model.Order;
 import adrianwudev.driverhelper.Model.PageResult;
 import adrianwudev.driverhelper.Qualifier.DefaultPage;
 import adrianwudev.driverhelper.Qualifier.DefaultPageSize;
-import adrianwudev.driverhelper.Repository.OrderRepository;
+import adrianwudev.driverhelper.Repository.OrderRepositoryImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,9 +17,9 @@ import java.time.LocalDateTime;
 public class OrderServiceImpl implements OrderService{
     private final int defaultPage;
     private final int defaultPageSize;
-    private final OrderRepository repository;
+    private final OrderRepositoryImpl repository;
     @Autowired
-    public OrderServiceImpl(OrderRepository repository,
+    public OrderServiceImpl(OrderRepositoryImpl repository,
                             @DefaultPage int defaultPage, @DefaultPageSize int defaultPageSize){
         this.repository = repository;
         this.defaultPage = defaultPage;

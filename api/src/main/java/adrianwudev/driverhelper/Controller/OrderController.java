@@ -35,15 +35,17 @@ public class OrderController {
 
     @PostMapping
     public JsonResponse<Object> addOrder(@RequestBody Order order) {
-        if (orderService.AddOrder(order))
-            return new JsonResponse<>(StatusCode.OK.getCode());
-        else
+        if (!orderService.AddOrder(order))
             return new JsonResponse<>(StatusCode.UNKNOWN.getCode());
+
+        return new JsonResponse<>(StatusCode.OK.getCode());
     }
 
-    @PutMapping("/{orderId}")
-    public boolean updateOrder(@PathVariable int orderId, @RequestBody Order order) {
-        order.setOrderId(orderId);
-        return orderService.UpdateOrder(order);
+    @PutMapping
+    public JsonResponse<Object> updateOrder(@RequestBody Order order) {
+        if(!orderService.UpdateOrder(order))
+            return new JsonResponse<>(StatusCode.UNKNOWN.getCode());
+
+        return new JsonResponse<>(StatusCode.OK.getCode());
     }
 }
