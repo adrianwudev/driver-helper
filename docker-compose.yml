@@ -1,7 +1,37 @@
 version: '3'
 services:
-  api:
-    build: ./
-    container_name: driver-helper-docker
+#  backend:
+#    build: ./
+#    container_name: driver-helper-backend
+#    restart: always
+#    ports:
+#      - "8080:8080"
+#    depends_on:
+#      - postgres-driver
+
+  postgres-driver:
+    image: postgres:15.3
+    container_name: postgres-driver
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: driver
+    volumes:
+      - ./data/pg:/var/lib/postgresql/data/
+      - ./initdb.sql:/docker-entrypoint-initdb.d/initdb.sql
+    restart: always
     ports:
-      - "8080:8080"
+      - "9040:5432"
+  postgres-driver-admin:
+    image: dpage/pgadmin4
+    container_name: postgres-driver-admin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "pgadmin@gmail.com"
+      PGADMIN_DEFAULT_PASSWORD: "password"
+    volumes:
+      - ./data/pgadmin:/var/lib/pgadmin
+    restart: always
+    ports:
+      - "9041:80"
+    depends_on:
+      - postgres-driver
