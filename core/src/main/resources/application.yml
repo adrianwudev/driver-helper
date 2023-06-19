@@ -4,16 +4,19 @@ spring:
 #    docker ip: 192.168.0.13
 #    url: jdbc:postgresql://localhost:9040/driver # local
     url: jdbc:postgresql://192.168.0.13:9040/driver # docker
+#    url: jdbc:postgresql://postgres-driver/driver
     username: adrian
     password: password
     driver-class-name: org.postgresql.Driver
-  flyway:
-    locations: "classpath:db/migration"
 
-flyway:
-  validate-on-migrate: false
-  encoding: UTF8MB4
-  out-of-order: true
+#  *** In order to start flyway before JOOQ, move flyway to plugin section ***
+#  flyway:
+#    locations: "classpath:db/migration"
+#
+#flyway:
+#  validate-on-migrate: false
+#  encoding: UTF8MB4
+#  out-of-order: true
 
 order:
   default:
