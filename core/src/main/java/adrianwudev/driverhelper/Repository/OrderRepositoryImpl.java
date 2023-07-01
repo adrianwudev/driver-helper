@@ -14,20 +14,23 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Connection;
 import java.util.List;
+import java.util.prefs.PreferencesFactory;
 
 @Slf4j
 @Service
 public class OrderRepositoryImpl implements OrderRepository {
-    private final DSLContext dslContext;
+    private final Connection connection;
 
     public OrderRepositoryImpl(Connection connection) {
-        this.dslContext = DSL.using(connection, SQLDialect.POSTGRES);
+        this.connection = connection;
     }
-
+    public DSLContext getDSLContext(){
+        return DSL.using(this.connection, SQLDialect.POSTGRES);
+    }
 
     @Override
     public Order get(int id) {
-        Result<Record> result = dslContext.fetch("SELECT * FROM orders WHERE order_id = ?", id);
+        Result<Record> result = getDSLContext().fetch("SELECT * FROM orders WHERE order_id = ?", id);
 
         if (!result.isNotEmpty())
             return null;
@@ -37,7 +40,7 @@ public class OrderRepositoryImpl implements OrderRepository {
     @Override
     public PageResult<Order> getAll(int page, int pageSize) {
         try {
-            return dslContext.transactionResult(configuration -> {
+            return getDSLContext().transactionResult(configuration -> {
                 DSLContext ctx = DSL.using(configuration);
                 String sql = "SELECT * FROM orders LIMIT ? OFFSET ?";
                 List<Order> orders = ctx.fetch(sql, pageSize, (page - 1) * pageSize)
@@ -62,7 +65,7 @@ public class OrderRepositoryImpl implements OrderRepository {
         log.info("Serialized Order object: " + json);
 
         try {
-            int rowsAffected = dslContext
+            int rowsAffected = getDSLContext()
                     .execute("INSERT INTO orders( " +
                                     " city, district, address " +
                                     ", order_time, pick_up_drop, pick_up_time" +
@@ -95,7 +98,7 @@ public class OrderRepositoryImpl implements OrderRepository {
     @Override
     public boolean update(Order order) {
         try {
-            return dslContext.transactionResult(configuration -> {
+            return getDSLContext().transactionResult(configuration -> {
                 DSLContext ctx = DSL.using(configuration);
                 int rowsAffected = ctx.update(Tables.ORDERS)
                         .set(Tables.ORDERS.CITY, order.getCity())

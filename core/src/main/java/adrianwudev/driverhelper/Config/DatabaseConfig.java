@@ -1,5 +1,6 @@
 package adrianwudev.driverhelper.Config;
 
+import adrianwudev.driverhelper.Db.ConnectionSetting;
 import adrianwudev.driverhelper.Qualifier.DefaultPage;
 import adrianwudev.driverhelper.Qualifier.DefaultPageSize;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,20 +20,13 @@ public class DatabaseConfig {
     private Environment environment;
 
     @Bean
-    public Connection connection() throws SQLException {
+    public ConnectionSetting ConnectionSetting() {
         String url = environment.getProperty("spring.datasource.url");
         String username = environment.getProperty("spring.datasource.username");
         String password = environment.getProperty("spring.datasource.password");
         String driverClassName = environment.getProperty("spring.datasource.driver-class-name");
 
-        // Create DB connection
-        DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setUrl(url);
-        dataSource.setUsername(username);
-        dataSource.setPassword(password);
-        dataSource.setDriverClassName(driverClassName);
-
-        return dataSource.getConnection();
+        return new ConnectionSetting(url, username, password, driverClassName);
     }
 
     @Value("${order.default.page}")

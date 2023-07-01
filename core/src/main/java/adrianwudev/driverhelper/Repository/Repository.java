@@ -1,6 +1,7 @@
 package adrianwudev.driverhelper.Repository;
 
 import adrianwudev.driverhelper.Model.PageResult;
+import org.jooq.DSLContext;
 
 public interface Repository<T> {
     T get(int id);
@@ -12,5 +13,5 @@ public interface Repository<T> {
     boolean update(T object);
 
     boolean delete(int id);
-
+    DSLContext getDSLContext();
 }
