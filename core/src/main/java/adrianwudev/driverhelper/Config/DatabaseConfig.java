@@ -1,17 +1,19 @@
 package adrianwudev.driverhelper.Config;
 
-import adrianwudev.driverhelper.Db.ConnectionSetting;
 import adrianwudev.driverhelper.Qualifier.DefaultPage;
 import adrianwudev.driverhelper.Qualifier.DefaultPageSize;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
+import org.jooq.DSLContext;
+import org.jooq.SQLDialect;
+import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
-import java.sql.Connection;
-import java.sql.SQLException;
+import javax.sql.DataSource;
 
 @Configuration
 public class DatabaseConfig {
@@ -20,26 +22,41 @@ public class DatabaseConfig {
     private Environment environment;
 
     @Bean
-    public ConnectionSetting connectionSetting() {
+    public DSLContext dslContext() {
+
         String url = environment.getProperty("spring.datasource.url");
         String username = environment.getProperty("spring.datasource.username");
         String password = environment.getProperty("spring.datasource.password");
-        String driverClassName = environment.getProperty("spring.datasource.driver-class-name");
+//        String driverClassName = environment.getProperty("spring.datasource.driver-class-name");
 
-        return new ConnectionSetting(url, username, password, driverClassName);
+        HikariConfig config = new HikariConfig();
+        config.setJdbcUrl(url);
+        config.setUsername(username);
+        config.setPassword(password);
+
+        // Create HikariCP
+        DataSource dataSource = new HikariDataSource(config);
+
+        // Create DSLContext of JOOQ
+        return DSL.using(dataSource, SQLDialect.POSTGRES);
     }
 
     @Value("${order.default.page}")
     public int defaultPage;
+
     @Bean
     @DefaultPage
-    public int defaultPage(){return defaultPage;}
+    public int defaultPage() {
+        return defaultPage;
+    }
 
     @Value("${order.default.page-size}")
     public int defaultPageSize;
 
     @Bean
     @DefaultPageSize
-    public int defaultPageSize(){return defaultPageSize;}
+    public int defaultPageSize() {
+        return defaultPageSize;
+    }
 
 }

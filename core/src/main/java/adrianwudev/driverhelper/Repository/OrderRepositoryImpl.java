@@ -8,29 +8,23 @@ import lombok.extern.slf4j.Slf4j;
 import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.Result;
-import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
 import org.springframework.stereotype.Service;
 
-import java.sql.Connection;
 import java.util.List;
-import java.util.prefs.PreferencesFactory;
 
 @Slf4j
 @Service
 public class OrderRepositoryImpl implements OrderRepository {
-    private final Connection connection;
+    private final DSLContext dslContext;
 
-    public OrderRepositoryImpl(Connection connection) {
-        this.connection = connection;
-    }
-    public DSLContext getDSLContext(){
-        return DSL.using(this.connection, SQLDialect.POSTGRES);
+    public OrderRepositoryImpl(DSLContext dslContext) {
+        this.dslContext = dslContext;
     }
 
     @Override
     public Order get(int id) {
-        Result<Record> result = getDSLContext().fetch("SELECT * FROM orders WHERE order_id = ?", id);
+        Result<Record> result = dslContext.fetch("SELECT * FROM orders WHERE order_id = ?", id);
 
         if (!result.isNotEmpty())
             return null;
@@ -40,7 +34,7 @@ public class OrderRepositoryImpl implements OrderRepository {
     @Override
     public PageResult<Order> getAll(int page, int pageSize) {
         try {
-            return getDSLContext().transactionResult(configuration -> {
+            return dslContext.transactionResult(configuration -> {
                 DSLContext ctx = DSL.using(configuration);
                 String sql = "SELECT * FROM orders LIMIT ? OFFSET ?";
                 List<Order> orders = ctx.fetch(sql, pageSize, (page - 1) * pageSize)
@@ -65,7 +59,7 @@ public class OrderRepositoryImpl implements OrderRepository {
         log.info("Serialized Order object: " + json);
 
         try {
-            int rowsAffected = getDSLContext()
+            int rowsAffected = dslContext
                     .execute("INSERT INTO orders( " +
                                     " city, district, address " +
                                     ", order_time, pick_up_drop, pick_up_time" +
@@ -98,7 +92,7 @@ public class OrderRepositoryImpl implements OrderRepository {
     @Override
     public boolean update(Order order) {
         try {
-            return getDSLContext().transactionResult(configuration -> {
+            return dslContext.transactionResult(configuration -> {
                 DSLContext ctx = DSL.using(configuration);
                 int rowsAffected = ctx.update(Tables.ORDERS)
                         .set(Tables.ORDERS.CITY, order.getCity())
