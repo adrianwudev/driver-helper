@@ -1,15 +1,13 @@
 package adrianwudev.driverhelper.Controller;
 
+import adrianwudev.driverhelper.Codes.StatusCode;
 import adrianwudev.driverhelper.Model.Order;
 import adrianwudev.driverhelper.Model.PageResult;
 import adrianwudev.driverhelper.Response.JsonResponse;
 import adrianwudev.driverhelper.Service.OrderService;
-import adrianwudev.driverhelper.Codes.StatusCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Slf4j
 @RestController
@@ -43,7 +41,15 @@ public class OrderController {
 
     @PutMapping
     public JsonResponse<Object> updateOrder(@RequestBody Order order) {
-        if(!orderService.UpdateOrder(order))
+        if (!orderService.UpdateOrder(order))
+            return new JsonResponse<>(StatusCode.UNKNOWN.getCode());
+
+        return new JsonResponse<>(StatusCode.OK.getCode());
+    }
+
+    @DeleteMapping("/{orderId}")
+    public JsonResponse<Object> deleteOrder(@PathVariable int orderId) {
+        if (!orderService.DeleteOrder(orderId))
             return new JsonResponse<>(StatusCode.UNKNOWN.getCode());
 
         return new JsonResponse<>(StatusCode.OK.getCode());

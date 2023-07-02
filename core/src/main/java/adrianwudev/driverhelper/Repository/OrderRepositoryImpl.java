@@ -121,7 +121,18 @@ public class OrderRepositoryImpl implements OrderRepository {
 
     @Override
     public boolean delete(int id) {
-        return false;
+        try{
+            return dslContext.transactionResult(configuration -> {
+                DSLContext ctx = DSL.using(configuration);
+                int rowsAffected = ctx.delete(Tables.ORDERS)
+                        .where(Tables.ORDERS.ORDER_ID.eq(id))
+                        .execute();
+                return rowsAffected > 0;
+            });
+        }catch(Exception e){
+            log.error("error: ", e);
+            throw e;
+        }
     }
 
     @Override

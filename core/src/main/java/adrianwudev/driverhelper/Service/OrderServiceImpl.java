@@ -54,6 +54,6 @@ public class OrderServiceImpl implements OrderService{
 
     @Override
     public boolean DeleteOrder(int orderId) {
-        return false;
+        return repository.delete(orderId);
     }
 }
