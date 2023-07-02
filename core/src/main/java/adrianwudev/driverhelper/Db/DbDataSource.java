@@ -1,7 +1,6 @@
 package adrianwudev.driverhelper.Db;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
@@ -11,15 +10,14 @@ import java.sql.SQLException;
 @Configuration
 public class DbDataSource {
 
-    private ConnectionSetting connectionSetting;
+    private final ConnectionSetting connectionSetting;
 
     @Autowired
     public DbDataSource(ConnectionSetting connectionSetting) {
         this.connectionSetting = connectionSetting;
     }
 
-    @Bean
-    public Connection connection() throws SQLException {
+    public Connection getConnection() throws SQLException {
         // Create DB connection
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setUrl(connectionSetting.getUrl());

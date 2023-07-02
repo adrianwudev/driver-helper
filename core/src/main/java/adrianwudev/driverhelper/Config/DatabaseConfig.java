@@ -20,7 +20,7 @@ public class DatabaseConfig {
     private Environment environment;
 
     @Bean
-    public ConnectionSetting ConnectionSetting() {
+    public ConnectionSetting connectionSetting() {
         String url = environment.getProperty("spring.datasource.url");
         String username = environment.getProperty("spring.datasource.username");
         String password = environment.getProperty("spring.datasource.password");

@@ -21,4 +21,4 @@ spring:
 order:
   default:
     page: 1
-    page-size:  50
+    page-size:  10
