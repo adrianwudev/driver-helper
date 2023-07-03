@@ -36,7 +36,7 @@ public class OrderController {
             @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "0") int pageSize,
             @RequestParam String city, @RequestParam String district, @RequestParam String weekDay, @RequestParam boolean isException) {
 
-        SearchCondition condition = new SearchCondition(city, district, weekDay, isException);
+        SearchCondition condition = new SearchCondition(city.trim(), district, weekDay, isException);
         return new JsonResponse<>(StatusCode.OK.getCode(), orderService.GetOrdersByConditions(page, pageSize, condition));
     }
 
