@@ -3,6 +3,7 @@ package adrianwudev.driverhelper.Controller;
 import adrianwudev.driverhelper.Codes.StatusCode;
 import adrianwudev.driverhelper.Model.Order;
 import adrianwudev.driverhelper.Model.PageResult;
+import adrianwudev.driverhelper.Model.SearchCondition;
 import adrianwudev.driverhelper.Response.JsonResponse;
 import adrianwudev.driverhelper.Service.OrderService;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +30,14 @@ public class OrderController {
     public JsonResponse<PageResult<Order>> getOrders(
             @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "0") int pageSize) {
         return new JsonResponse<>(StatusCode.OK.getCode(), orderService.GetOrders(page, pageSize));
+    }
+    @GetMapping("/conditions")
+    public JsonResponse<PageResult<Order>> getOrdersByConditions(
+            @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "0") int pageSize,
+            @RequestParam String city, @RequestParam String district, @RequestParam String weekDay, @RequestParam boolean isException) {
+
+        SearchCondition condition = new SearchCondition(city, district, weekDay, isException);
+        return new JsonResponse<>(StatusCode.OK.getCode(), orderService.GetOrdersByConditions(page, pageSize, condition));
     }
 
     @PostMapping

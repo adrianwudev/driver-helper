@@ -2,6 +2,7 @@ package adrianwudev.driverhelper.Service;
 
 import adrianwudev.driverhelper.Model.Order;
 import adrianwudev.driverhelper.Model.PageResult;
+import adrianwudev.driverhelper.Model.SearchCondition;
 import adrianwudev.driverhelper.Qualifier.DefaultPage;
 import adrianwudev.driverhelper.Qualifier.DefaultPageSize;
 import adrianwudev.driverhelper.Repository.OrderRepositoryImpl;
@@ -39,8 +40,15 @@ public class OrderServiceImpl implements OrderService{
     }
 
     @Override
+    public PageResult<Order> GetOrdersByConditions(int page, int pageSize, SearchCondition condition) {
+        if (page <= 0) page = defaultPage;
+        if (pageSize <= 0) pageSize = defaultPageSize;
+
+        return repository.getByConditions(page, pageSize, condition);
+    }
+
+    @Override
     public boolean AddOrder(Order order) {
-        order.setWeekday(LocalDate.now().getDayOfWeek().toString());
         order.setWeekday(order.getOrderTime().getDayOfWeek().toString());
         order.setCreateTime(LocalDateTime.now());
         order.setModifyTime(LocalDateTime.now());

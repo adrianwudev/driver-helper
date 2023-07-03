@@ -3,6 +3,7 @@ package adrianwudev.driverhelper.Repository;
 import adrianwudev.driverhelper.Jooq.Dao.Tables;
 import adrianwudev.driverhelper.Model.Order;
 import adrianwudev.driverhelper.Model.PageResult;
+import adrianwudev.driverhelper.Model.SearchCondition;
 import adrianwudev.driverhelper.Util.GsonAdaptor;
 import lombok.extern.slf4j.Slf4j;
 import org.jooq.DSLContext;
@@ -11,6 +12,7 @@ import org.jooq.Result;
 import org.jooq.impl.DSL;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -36,11 +38,19 @@ public class OrderRepositoryImpl implements OrderRepository {
         try {
             return dslContext.transactionResult(configuration -> {
                 DSLContext ctx = DSL.using(configuration);
-                String sql = "SELECT * FROM orders LIMIT ? OFFSET ?";
-                List<Order> orders = ctx.fetch(sql, pageSize, (page - 1) * pageSize)
+                String select = "SELECT order_id, city, district, address, order_time, pick_up_drop, pick_up_time," +
+                        "       weekday, group_name, amount, distance, is_exception, " +
+                        "       COUNT(*) OVER (PARTITION BY city, district, address, pick_up_time) AS repeat_count, " +
+                        "       create_time, modify_time " +
+                        "       FROM orders ";
+                String pagination = " ORDER BY EXTRACT(HOUR FROM order_time) DESC " +
+                        "       , EXTRACT(MINUTE FROM order_time) DESC " +
+                        "       , EXTRACT(SECOND FROM order_time) DESC, repeat_count DESC " +
+                        "         LIMIT ? OFFSET ?";
+                List<Order> orders = ctx.fetch(select + pagination, pageSize, (page - 1) * pageSize)
                         .into(Order.class);
-                String countSql = "SELECT COUNT(*) AS count FROM orders";
 
+                String countSql = "SELECT COUNT(*) AS count FROM orders";
                 Record countRecord = ctx.fetchOne(countSql);
                 Integer total = countRecord != null
                         ? countRecord.getValue(0, Integer.class) : 0;
@@ -121,7 +131,7 @@ public class OrderRepositoryImpl implements OrderRepository {
 
     @Override
     public boolean delete(int id) {
-        try{
+        try {
             return dslContext.transactionResult(configuration -> {
                 DSLContext ctx = DSL.using(configuration);
                 int rowsAffected = ctx.delete(Tables.ORDERS)
@@ -129,14 +139,72 @@ public class OrderRepositoryImpl implements OrderRepository {
                         .execute();
                 return rowsAffected > 0;
             });
-        }catch(Exception e){
+        } catch (Exception e) {
             log.error("error: ", e);
             throw e;
         }
     }
 
     @Override
-    public PageResult<Order> getByConditions(Order order, int page, int pageSize) {
-        return null;
+    public PageResult<Order> getByConditions(int page, int pageSize, SearchCondition condition) {
+        try {
+            return dslContext.transactionResult(configuration -> {
+                DSLContext ctx = DSL.using(configuration);
+                String select = "SELECT order_id, city, district, address, order_time, pick_up_drop, pick_up_time," +
+                        "       weekday, group_name, amount, distance, is_exception, " +
+                        "       COUNT(*) OVER (PARTITION BY city, district, address, pick_up_time) AS repeat_count, " +
+                        "       create_time, modify_time " +
+                        "       FROM orders ";
+
+
+                StringBuilder where = new StringBuilder(" WHERE 1=1");
+                List<Object> params = new ArrayList<>();
+                if (!condition.getCity().isBlank()) {
+                    where.append(" AND city = ?");
+                    params.add(condition.getCity());
+                }
+                if (!condition.getDistrict().isBlank()) {
+                    where.append(" AND district = ?");
+                    params.add(condition.getDistrict());
+                }
+                if (!condition.getWeekDay().isBlank()) {
+                    where.append(" AND weekday = ?");
+                    params.add(condition.getWeekDay());
+                }
+                where.append(" AND is_exception = ?");
+                params.add(condition.isException());
+
+                String pagination = " ORDER BY EXTRACT(HOUR FROM order_time) DESC " +
+                        ", EXTRACT(MINUTE FROM order_time) DESC " +
+                        ", EXTRACT(SECOND FROM order_time) DESC, repeat_count DESC " +
+                        "  LIMIT ? OFFSET ?";
+                params.add(pageSize);
+                params.add((page - 1) * pageSize);
+
+                String sql = select + where + pagination;
+                List<Order> orders = ctx.fetch(sql, params.toArray())
+                        .into(Order.class);
+
+                // Count Total
+                String countSql = "SELECT COUNT(*) AS count FROM orders";
+                countSql += where;
+
+                // Delete pageSize, currentPage
+                for (int i = 0; i < 2; i++) {
+                    params.remove(params.size() - 1);
+                }
+
+                Record countRecord = ctx.fetchOne(countSql, params.toArray());
+
+                Integer total = countRecord != null
+                        ? countRecord.getValue(0, Integer.class) : 0;
+
+                return new PageResult<>(total, page, pageSize, orders);
+            });
+
+        } catch (Exception e) {
+            log.error("error: ", e);
+            throw e;
+        }
     }
 }
