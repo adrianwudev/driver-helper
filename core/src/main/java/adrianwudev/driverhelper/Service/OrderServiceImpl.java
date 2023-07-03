@@ -41,6 +41,7 @@ public class OrderServiceImpl implements OrderService{
     @Override
     public boolean AddOrder(Order order) {
         order.setWeekday(LocalDate.now().getDayOfWeek().toString());
+        order.setWeekday(order.getOrderTime().getDayOfWeek().toString());
         order.setCreateTime(LocalDateTime.now());
         order.setModifyTime(LocalDateTime.now());
         return repository.create(order);
