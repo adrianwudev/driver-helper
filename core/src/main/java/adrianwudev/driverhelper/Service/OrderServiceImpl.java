@@ -50,6 +50,7 @@ public class OrderServiceImpl implements OrderService{
     @Override
     public boolean UpdateOrder(Order order) {
         order.setModifyTime(LocalDateTime.now());
+        order.setWeekday(order.getOrderTime().getDayOfWeek().toString());
         return repository.update(order);
     }
 
