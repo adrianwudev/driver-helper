@@ -2,7 +2,7 @@ docker run --name postgres-driver -d -p 9040:5432 -e POSTGRES_PASSWORD=password 
 docker run -d -p 9041:80 --name postgres-driver-admin -e "PGADMIN_DEFAULT_EMAIL=pgadmin@gmail.com" -e "PGADMIN_DEFAULT_PASSWORD=password" dpage/pgadmin4
 
 // deploy
-docker build -t springapi .
-docker run --name springapi -p 8081:8081 springapi
+docker build -t driver-helper-spring .
+docker run --name driver-helper-spring -p 8081:8081 driver-helper-spring
 
 docker compose up

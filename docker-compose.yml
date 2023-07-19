@@ -1,13 +1,5 @@
 version: '3'
 services:
-#  backend:
-#    build: ./
-#    container_name: driver-helper-backend
-#    restart: always
-#    ports:
-#      - "8080:8080"
-#    depends_on:
-#      - postgres-driver
 
   postgres-driver:
     image: postgres:15.3
