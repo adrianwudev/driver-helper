@@ -10,3 +10,9 @@ services:
       - "8080:8080"
     depends_on:
       - postgres-driver
+    networks:
+      - driver-network
+
+networks:
+  driver-network:
+    driver: bridge
