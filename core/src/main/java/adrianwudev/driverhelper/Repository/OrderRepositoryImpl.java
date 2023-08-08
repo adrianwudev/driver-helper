@@ -43,9 +43,9 @@ public class OrderRepositoryImpl implements OrderRepository {
                         "       COUNT(*) OVER (PARTITION BY city, district, address, pick_up_time) AS repeat_count, " +
                         "       create_time, modify_time " +
                         "       FROM orders ";
-                String pagination = " ORDER BY EXTRACT(HOUR FROM order_time) DESC " +
-                        "       , EXTRACT(MINUTE FROM order_time) DESC " +
-                        "       , EXTRACT(SECOND FROM order_time) DESC, repeat_count DESC " +
+                String pagination = " ORDER BY " +
+                        " EXTRACT(EPOCH FROM ( order_time AT TIME ZONE 'UTC' - NOW() AT TIME ZONE 'UTC-8')) % (24 * 3600) ASC" +
+                        "       , repeat_count DESC " +
                         "         LIMIT ? OFFSET ?";
                 List<Order> orders = ctx.fetch(select + pagination, pageSize, (page - 1) * pageSize)
                         .into(Order.class);
@@ -176,9 +176,9 @@ public class OrderRepositoryImpl implements OrderRepository {
                     params.add(condition.getIsException());
                 }
 
-                String pagination = " ORDER BY EXTRACT(HOUR FROM order_time) DESC " +
-                        ", EXTRACT(MINUTE FROM order_time) DESC " +
-                        ", EXTRACT(SECOND FROM order_time) DESC, repeat_count DESC " +
+                String pagination = " ORDER BY " +
+                        " EXTRACT(EPOCH FROM ( order_time AT TIME ZONE 'UTC' - NOW() AT TIME ZONE 'UTC-8')) % (24 * 3600) ASC " +
+                        ", repeat_count DESC " +
                         "  LIMIT ? OFFSET ?";
                 params.add(pageSize);
                 params.add((page - 1) * pageSize);
