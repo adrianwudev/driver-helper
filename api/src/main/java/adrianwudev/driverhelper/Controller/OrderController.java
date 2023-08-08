@@ -34,7 +34,8 @@ public class OrderController {
     @GetMapping("/conditions")
     public JsonResponse<PageResult<Order>> getOrdersByConditions(
             @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "0") int pageSize,
-            @RequestParam String city, @RequestParam String district, @RequestParam String weekDay, @RequestParam boolean isException) {
+            @RequestParam String city, @RequestParam String district, @RequestParam String weekDay,
+            @RequestParam(required = false) Boolean isException) {
 
         SearchCondition condition = new SearchCondition(city.trim(), district, weekDay, isException);
         return new JsonResponse<>(StatusCode.OK.getCode(), orderService.GetOrdersByConditions(page, pageSize, condition));

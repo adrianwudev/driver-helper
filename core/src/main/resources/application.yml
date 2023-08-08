@@ -4,6 +4,7 @@ spring:
 #    docker ip: 192.168.0.13
 #    url: jdbc:postgresql://localhost:9040/driver # local
     url: jdbc:postgresql://192.168.0.13:9040/driver # docker
+#    url: jdbc:postgresql://172.21.64.1:9040/driver # local
 #    url: jdbc:postgresql://postgres-driver/driver
     username: adrian
     password: password

@@ -12,5 +12,5 @@ public class SearchCondition {
     private String city;
     private String district;
     private String weekDay;
-    private boolean isException;
+    private Boolean isException;
 }

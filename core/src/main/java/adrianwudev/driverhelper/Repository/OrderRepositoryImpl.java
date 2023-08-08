@@ -171,8 +171,10 @@ public class OrderRepositoryImpl implements OrderRepository {
                     where.append(" AND weekday = ?");
                     params.add(condition.getWeekDay());
                 }
-                where.append(" AND is_exception = ?");
-                params.add(condition.isException());
+                if (condition.getIsException() != null){
+                    where.append(" AND is_exception = ?");
+                    params.add(condition.getIsException());
+                }
 
                 String pagination = " ORDER BY EXTRACT(HOUR FROM order_time) DESC " +
                         ", EXTRACT(MINUTE FROM order_time) DESC " +

@@ -1,5 +1,6 @@
 package adrianwudev.driverhelper.Model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,6 +23,7 @@ public class Order {
     private String groupName;
     private double amount;
     private double distance;
+    @JsonProperty("isException")
     private boolean isException;
     private int repeatCount;
     private LocalDateTime createTime;

@@ -22,6 +22,7 @@
     <!--  <url>jdbc:postgresql://postgres-driver/driver</url>-->
     <db.driver>org.postgresql.Driver</db.driver>
     <db.url>jdbc:postgresql://192.168.0.13:9040/driver</db.url>
+<!--    <db.url>jdbc:postgresql://172.21.64.1:9040/driver</db.url>-->
     <db.user>adrian</db.user>
     <db.password>password</db.password>
   </properties>
@@ -69,6 +70,10 @@
       <groupId>com.zaxxer</groupId>
       <artifactId>HikariCP</artifactId>
       <version>${hikaricp.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-annotations</artifactId>
     </dependency>
   </dependencies>
 
