@@ -157,7 +157,7 @@ public class OrderRepositoryImpl implements OrderRepository {
                              weekday, group_name, amount, distance, is_exception,
                              COUNT(*) OVER (PARTITION BY city, district, address, pick_up_time) AS repeat_count,
                              create_time, modify_time,
-                             EXTRACT(EPOCH FROM ( order_time AT TIME ZONE 'UTC' - NOW() AT TIME ZONE 'UTC+8')) % (24 * 3600) AS order_time_diff
+                             EXTRACT(EPOCH FROM ( order_time AT TIME ZONE 'UTC+8' - NOW() AT TIME ZONE 'UTC+8')) % (24 * 3600) AS order_time_diff
                              FROM orders
                         """;
                 String cteCloseBracket= "\n) ";
