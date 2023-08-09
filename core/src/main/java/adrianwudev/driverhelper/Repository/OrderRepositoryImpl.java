@@ -150,12 +150,25 @@ public class OrderRepositoryImpl implements OrderRepository {
         try {
             return dslContext.transactionResult(configuration -> {
                 DSLContext ctx = DSL.using(configuration);
-                String select = "SELECT order_id, city, district, address, order_time, pick_up_drop, pick_up_time," +
-                        "       weekday, group_name, amount, distance, is_exception, " +
-                        "       COUNT(*) OVER (PARTITION BY city, district, address, pick_up_time) AS repeat_count, " +
-                        "       create_time, modify_time " +
-                        "       FROM orders ";
+                String cte =
+                        """
+                        WITH ranked_orders AS(
+                            SELECT order_id, city, district, address, order_time, pick_up_drop, pick_up_time,
+                             weekday, group_name, amount, distance, is_exception,
+                             COUNT(*) OVER (PARTITION BY city, district, address, pick_up_time) AS repeat_count,
+                             create_time, modify_time,
+                             EXTRACT(EPOCH FROM ( order_time AT TIME ZONE 'UTC' - NOW() AT TIME ZONE 'UTC+8')) % (24 * 3600) AS order_time_diff
+                             FROM orders
+                        """;
+                String cteCloseBracket= "\n) ";
 
+                String select = """
+                        
+                        SELECT
+                          order_id, city, district, address, order_time, pick_up_drop, pick_up_time,
+                          weekday, group_name, amount, distance, is_exception, repeat_count, create_time, modify_time
+                        FROM ranked_orders
+                        """;
 
                 StringBuilder where = new StringBuilder(" WHERE 1=1");
                 List<Object> params = new ArrayList<>();
@@ -176,14 +189,17 @@ public class OrderRepositoryImpl implements OrderRepository {
                     params.add(condition.getIsException());
                 }
 
-                String pagination = " ORDER BY " +
-                        " EXTRACT(EPOCH FROM ( order_time AT TIME ZONE 'UTC' - NOW() AT TIME ZONE 'UTC-8')) % (24 * 3600) ASC " +
-                        ", repeat_count DESC " +
-                        "  LIMIT ? OFFSET ?";
+                String pagination =
+                            """ 
+                            ORDER BY
+                                order_time_diff ASC,
+                                repeat_count DESC
+                                LIMIT ? OFFSET ? 
+                            """;
                 params.add(pageSize);
                 params.add((page - 1) * pageSize);
 
-                String sql = select + where + pagination;
+                String sql = cte + where + cteCloseBracket + select + pagination;
                 List<Order> orders = ctx.fetch(sql, params.toArray())
                         .into(Order.class);
 
