@@ -4,17 +4,21 @@
 package adrianwudev.driverhelper.Jooq.Dao.tables;
 
 
+import adrianwudev.driverhelper.Jooq.Dao.Indexes;
 import adrianwudev.driverhelper.Jooq.Dao.Keys;
 import adrianwudev.driverhelper.Jooq.Dao.Public;
 import adrianwudev.driverhelper.Jooq.Dao.tables.records.OrdersRecord;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
 import java.util.function.Function;
 
 import org.jooq.Field;
 import org.jooq.ForeignKey;
 import org.jooq.Function15;
 import org.jooq.Identity;
+import org.jooq.Index;
 import org.jooq.Name;
 import org.jooq.Record;
 import org.jooq.Records;
@@ -162,6 +166,11 @@ public class Orders extends TableImpl<OrdersRecord> {
     @Override
     public Schema getSchema() {
         return aliased() ? null : Public.PUBLIC;
+    }
+
+    @Override
+    public List<Index> getIndexes() {
+        return Arrays.asList(Indexes.IDX_ORDERS_ISEXCEPTION, Indexes.IDX_ORDERS_WEEKDAY, Indexes.IDX_ORDERS_WEEKDAY_ISEXCEPTION);
     }
 
     @Override

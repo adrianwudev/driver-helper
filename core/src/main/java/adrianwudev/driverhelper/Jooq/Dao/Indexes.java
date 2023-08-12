@@ -5,6 +5,7 @@ package adrianwudev.driverhelper.Jooq.Dao;
 
 
 import adrianwudev.driverhelper.Jooq.Dao.tables.FlywaySchemaHistory;
+import adrianwudev.driverhelper.Jooq.Dao.tables.Orders;
 
 import org.jooq.Index;
 import org.jooq.OrderField;
@@ -23,4 +24,7 @@ public class Indexes {
     // -------------------------------------------------------------------------
 
     public static final Index FLYWAY_SCHEMA_HISTORY_S_IDX = Internal.createIndex(DSL.name("flyway_schema_history_s_idx"), FlywaySchemaHistory.FLYWAY_SCHEMA_HISTORY, new OrderField[] { FlywaySchemaHistory.FLYWAY_SCHEMA_HISTORY.SUCCESS }, false);
+    public static final Index IDX_ORDERS_ISEXCEPTION = Internal.createIndex(DSL.name("idx_orders_isexception"), Orders.ORDERS, new OrderField[] { Orders.ORDERS.IS_EXCEPTION }, false);
+    public static final Index IDX_ORDERS_WEEKDAY = Internal.createIndex(DSL.name("idx_orders_weekday"), Orders.ORDERS, new OrderField[] { Orders.ORDERS.WEEKDAY }, false);
+    public static final Index IDX_ORDERS_WEEKDAY_ISEXCEPTION = Internal.createIndex(DSL.name("idx_orders_weekday_isexception"), Orders.ORDERS, new OrderField[] { Orders.ORDERS.WEEKDAY, Orders.ORDERS.IS_EXCEPTION }, false);
 }
