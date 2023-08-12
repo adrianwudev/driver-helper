@@ -4,6 +4,7 @@ import adrianwudev.driverhelper.Qualifier.DefaultPage;
 import adrianwudev.driverhelper.Qualifier.DefaultPageSize;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import lombok.extern.slf4j.Slf4j;
 import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
@@ -15,6 +16,7 @@ import org.springframework.core.env.Environment;
 
 import javax.sql.DataSource;
 
+@Slf4j
 @Configuration
 public class DatabaseConfig {
 
@@ -27,7 +29,10 @@ public class DatabaseConfig {
         String url = environment.getProperty("spring.datasource.url");
         String username = environment.getProperty("spring.datasource.username");
         String password = environment.getProperty("spring.datasource.password");
-//        String driverClassName = environment.getProperty("spring.datasource.driver-class-name");
+
+        // Print database connection properties
+        log.info("Database URL: " + url);
+        log.info("Username: " + username);
 
         HikariConfig config = new HikariConfig();
         config.setJdbcUrl(url);

@@ -18,11 +18,9 @@
     <gson.version>2.8.9</gson.version>
     <!--  local <url>jdbc:postgresql://localhost:9040/driver</url>  -->
     <!--  dockerIp: 192.168.0.13  -->
-    <!--  <url>jdbc:postgresql://192.168.0.13:9040/driver</url>  -->
-    <!--  <url>jdbc:postgresql://postgres-driver/driver</url>-->
     <db.driver>org.postgresql.Driver</db.driver>
-    <db.url>jdbc:postgresql://192.168.0.13:9040/driver</db.url>
-<!--    <db.url>jdbc:postgresql://172.21.64.1:9040/driver</db.url>-->
+    <db.url>jdbc:postgresql://postgres-driver:5432/driver</db.url>
+<!--    <db.url>jdbc:postgresql://172.22.128.1:9040/driver</db.url>-->
     <db.user>adrian</db.user>
     <db.password>password</db.password>
   </properties>
@@ -77,6 +75,8 @@
     </dependency>
   </dependencies>
 
+<!-- Before docker image build and maven clean install, need to mark the build section first. -->
+<!-- But in Dev environment, we could unmark them -->
   <build>
     <plugins>
       <plugin>

@@ -14,6 +14,8 @@ services:
     restart: always
     ports:
       - "9040:5432"
+    networks:
+      - driver-network
   postgres-driver-admin:
     image: dpage/pgadmin4
     container_name: postgres-driver-admin
@@ -27,3 +29,9 @@ services:
       - "9041:80"
     depends_on:
       - postgres-driver
+    networks:
+      - driver-network
+
+networks:
+  driver-network:
+    name: driver-network
