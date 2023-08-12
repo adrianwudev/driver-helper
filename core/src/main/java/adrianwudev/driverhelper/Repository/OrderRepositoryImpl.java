@@ -12,9 +12,7 @@ import org.jooq.Result;
 import org.jooq.impl.DSL;
 import org.springframework.stereotype.Service;
 
-import java.sql.Timestamp;
 import java.time.*;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -183,6 +181,7 @@ public class OrderRepositoryImpl implements OrderRepository {
 
                 ZoneId zoneId = ZoneId.of("Asia/Taipei");
                 LocalDateTime localDateTime = ZonedDateTime.now(zoneId).toLocalDateTime();
+                localDateTime = setHourMinByCondition(condition, localDateTime);
                 log.info("localDateTime: " + localDateTime);
                 params.add(localDateTime);
                 if (!condition.getCity().isBlank()) {
@@ -238,5 +237,15 @@ public class OrderRepositoryImpl implements OrderRepository {
             log.error("error: ", e);
             throw e;
         }
+    }
+
+    private static LocalDateTime setHourMinByCondition(SearchCondition condition, LocalDateTime localDateTime) {
+        if(condition.getTime() != null){
+            String[] hourMin = condition.getTime().split(":");
+            int hour = Integer.parseInt(hourMin[0]);
+            int min = Integer.parseInt(hourMin[1]);
+            localDateTime = localDateTime.withHour(hour).withMinute(min).withSecond(0).withNano(0);
+        }
+        return localDateTime;
     }
 }
