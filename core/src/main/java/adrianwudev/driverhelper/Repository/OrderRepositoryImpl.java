@@ -12,7 +12,9 @@ import org.jooq.Result;
 import org.jooq.impl.DSL;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,8 +50,12 @@ public class OrderRepositoryImpl implements OrderRepository {
                         " EXTRACT(EPOCH FROM ( order_time - ? )) % (24 * 3600) ASC" +
                         "       , repeat_count DESC " +
                         "         LIMIT ? OFFSET ?";
+
+                ZoneId zoneId = ZoneId.of("Asia/Taipei");
+                LocalDateTime localDateTime = ZonedDateTime.now(zoneId).toLocalDateTime();
+                log.info("localDateTime: " + localDateTime);
                 List<Order> orders = ctx.fetch(select + pagination,
-                                LocalDateTime.now(), pageSize, (page - 1) * pageSize)
+                                localDateTime, pageSize, (page - 1) * pageSize)
                         .into(Order.class);
 
                 String countSql = "SELECT COUNT(*) AS count FROM orders";
@@ -174,7 +180,11 @@ public class OrderRepositoryImpl implements OrderRepository {
 
                 StringBuilder where = new StringBuilder(" WHERE 1=1");
                 List<Object> params = new ArrayList<>();
-                params.add(LocalDateTime.now());
+
+                ZoneId zoneId = ZoneId.of("Asia/Taipei");
+                LocalDateTime localDateTime = ZonedDateTime.now(zoneId).toLocalDateTime();
+                log.info("localDateTime: " + localDateTime);
+                params.add(localDateTime);
                 if (!condition.getCity().isBlank()) {
                     where.append(" AND city = ?");
                     params.add(condition.getCity());
