@@ -12,6 +12,7 @@ import org.jooq.Result;
 import org.jooq.impl.DSL;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,10 +45,11 @@ public class OrderRepositoryImpl implements OrderRepository {
                         "       create_time, modify_time " +
                         "       FROM orders ";
                 String pagination = " ORDER BY " +
-                        " EXTRACT(EPOCH FROM ( order_time AT TIME ZONE 'UTC' - NOW() AT TIME ZONE 'UTC-8')) % (24 * 3600) ASC" +
+                        " EXTRACT(EPOCH FROM ( order_time - ? )) % (24 * 3600) ASC" +
                         "       , repeat_count DESC " +
                         "         LIMIT ? OFFSET ?";
-                List<Order> orders = ctx.fetch(select + pagination, pageSize, (page - 1) * pageSize)
+                List<Order> orders = ctx.fetch(select + pagination,
+                                LocalDateTime.now(), pageSize, (page - 1) * pageSize)
                         .into(Order.class);
 
                 String countSql = "SELECT COUNT(*) AS count FROM orders";
@@ -157,7 +159,7 @@ public class OrderRepositoryImpl implements OrderRepository {
                              weekday, group_name, amount, distance, is_exception,
                              COUNT(*) OVER (PARTITION BY city, district, address, pick_up_time) AS repeat_count,
                              create_time, modify_time,
-                             EXTRACT(EPOCH FROM ( order_time AT TIME ZONE 'UTC+8' - NOW() AT TIME ZONE 'UTC+8')) % (24 * 3600) AS order_time_diff
+                             EXTRACT(EPOCH FROM ( order_time - ?)) % (24 * 3600) AS order_time_diff
                              FROM orders
                         """;
                 String cteCloseBracket= "\n) ";
@@ -172,6 +174,7 @@ public class OrderRepositoryImpl implements OrderRepository {
 
                 StringBuilder where = new StringBuilder(" WHERE 1=1");
                 List<Object> params = new ArrayList<>();
+                params.add(LocalDateTime.now());
                 if (!condition.getCity().isBlank()) {
                     where.append(" AND city = ?");
                     params.add(condition.getCity());
@@ -211,6 +214,7 @@ public class OrderRepositoryImpl implements OrderRepository {
                 for (int i = 0; i < 2; i++) {
                     params.remove(params.size() - 1);
                 }
+                params.remove(0); //Delete LocalDateTime parameter
 
                 Record countRecord = ctx.fetchOne(countSql, params.toArray());
 
