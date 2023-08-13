@@ -2,7 +2,7 @@ version: '3'
 services:
 
   postgres-driver:
-    image: postgres:15.3
+    image: postgres:15.4
     container_name: postgres-driver
     environment:
       POSTGRES_USER: postgres

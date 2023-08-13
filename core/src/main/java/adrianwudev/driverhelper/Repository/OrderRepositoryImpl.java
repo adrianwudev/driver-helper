@@ -12,6 +12,7 @@ import org.jooq.Result;
 import org.jooq.impl.DSL;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.time.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -183,7 +184,9 @@ public class OrderRepositoryImpl implements OrderRepository {
                 LocalDateTime localDateTime = ZonedDateTime.now(zoneId).toLocalDateTime();
                 localDateTime = setHourMinByCondition(condition, localDateTime);
                 log.info("localDateTime: " + localDateTime);
-                params.add(localDateTime);
+                Timestamp timeStamp = Timestamp.valueOf(localDateTime);
+                log.info("timeStamp: " + timeStamp);
+                params.add(timeStamp);
                 if (!condition.getCity().isBlank()) {
                     where.append(" AND city = ?");
                     params.add(condition.getCity());
