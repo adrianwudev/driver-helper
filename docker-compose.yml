@@ -4,6 +4,7 @@ services:
   postgres-driver:
     image: postgres:15.4
     container_name: postgres-driver
+    user: root
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
@@ -19,6 +20,7 @@ services:
   postgres-driver-admin:
     image: dpage/pgadmin4
     container_name: postgres-driver-admin
+    user: root
     environment:
       PGADMIN_DEFAULT_EMAIL: "pgadmin@gmail.com"
       PGADMIN_DEFAULT_PASSWORD: "password"
